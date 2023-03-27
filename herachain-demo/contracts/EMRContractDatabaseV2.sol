@@ -4,18 +4,18 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
-import "./HeraCoinRewarder.sol";
+// import "./HeraCoinRewarder.sol";
 import "./EMRStorageContractV2.sol";
 
-contract EMRContractDatabaseV2 {
+contract EMRContractDatabaseV2 is Ownable {
     //Reward Contract
-    HeraCoinRewarder private rewarder;
+    // HeraCoinRewarder private rewarder;
 
     //list of authorized addresses for calling transactions on this contract
     mapping(address => bool) private authorized_addresses;
 
     //Mapping of a patient's MD5 Hash to the integer IDs of their EMRContracts
-    mapping(bytes32 => address) public patientsToEMRStorage;
+    mapping(string => address) private patientsToEMRStorage;
 
     event EMRCreated(address patient, uint256 record_id);
     event SentRewardTokens(
@@ -40,7 +40,7 @@ contract EMRContractDatabaseV2 {
     }
 
     function createEMRStorage(
-        bytes32 patient_hash
+        string calldata patient_hash
     ) public isAuthorizedAddress(msg.sender) returns (bool) {
         //The database can build the EMRStorageContract
         if (patientsToEMRStorage[patient_hash] != address(0x0)) {
@@ -59,7 +59,7 @@ contract EMRContractDatabaseV2 {
     }
 
     function createEMRStorageInternal(
-        bytes32 patient_hash
+        string calldata patient_hash
     ) internal isAuthorizedAddress(msg.sender) returns (bool) {
         //The database can build the EMRStorageContract
         if (patientsToEMRStorage[patient_hash] != address(0x0)) {
@@ -78,12 +78,12 @@ contract EMRContractDatabaseV2 {
         return true;
     }
 
-    function sendRewardForEmrCreation(address patient) public {
-        rewarder.sendRewardForEmrCreation(payable(patient));
-    }
+    // function sendRewardForEmrCreation(address patient) public {
+    //     rewarder.sendRewardForEmrCreation(payable(patient));
+    // }
 
     function createEMR(
-        bytes32 memory patient_hash,
+        string calldata patient_hash,
         string memory _record_type,
         string memory _record_status,
         uint256 _record_date,
@@ -111,7 +111,7 @@ contract EMRContractDatabaseV2 {
     }
 
     function getEMRStorageContract(
-        bytes32 patient_hash
+        string calldata patient_hash
     ) public view isAuthorizedAddress(msg.sender) returns (address) {
         return patientsToEMRStorage[patient_hash];
     }
@@ -132,7 +132,7 @@ contract EMRContractDatabaseV2 {
 
     // Used to transfer ownership of EMRStorageContract to a new address and remove from the EMRContractDatabase
     function exportEMRStorageContract(
-        bytes32 patient_hash,
+        string calldata patient_hash,
         address to_address
     ) public onlyOwner returns (bool) {
         if (patientsToEMRStorage[patient_hash] == address(0x0)) {

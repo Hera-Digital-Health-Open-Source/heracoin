@@ -28,11 +28,11 @@ contract EMRStorageContractV2 is Ownable {
 
     EMRContractDatabaseV2 private database;
 
-    bytes32 private patient_hash;
+    string private patient_hash;
 
-    constructor(EMRContractDatabaseV2 _database, bytes32 _patient_hash) {
+    constructor(EMRContractDatabaseV2 _database, string memory _patient_hash) {
         database = _database;
-        patient_hash = _patient_hash
+        patient_hash = _patient_hash;
     }
 
     modifier fromDatabase() {
@@ -40,7 +40,7 @@ contract EMRStorageContractV2 is Ownable {
         _;
     }
 
-    function getPatientHash() public view onlyOwner returns (bytes32){
+    function getPatientHash() public view onlyOwner returns (string memory) {
         return patient_hash;
     }
 
