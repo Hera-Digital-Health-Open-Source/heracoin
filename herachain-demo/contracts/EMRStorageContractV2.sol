@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
-import "./EMRContractDatabase.sol";
+import "./EMRContractDatabaseV2.sol";
 
 struct EMR {
     string record_type;
@@ -15,28 +15,33 @@ struct EMR {
     string ipfs_data_hash;
 }
 
-contract EMRStorageContract is Ownable {
+contract EMRStorageContractV2 is Ownable {
     using Counters for Counters.Counter;
     Counters.Counter private emrIdCounter;
 
-    event EMRCreated(address patient, uint256 record_id);
+    // event EMRCreated(address patient, uint256 record_id);
 
-    event EMRAccessed(address accessor, uint256 record_id);
+    // event EMRAccessed(address accessor, uint256 record_id);
 
     mapping(uint256 => EMR) private emrs;
     uint256[] private emrIds;
 
-    EMRContractDatabase private database;
+    EMRContractDatabaseV2 private database;
 
     bytes32 private patient_hash;
 
-    constructor(EMRContractDatabase _database, bytes32 _patient_hash) {
+    constructor(EMRContractDatabaseV2 _database, bytes32 _patient_hash) {
         database = _database;
+        patient_hash = _patient_hash
     }
 
     modifier fromDatabase() {
         require(msg.sender == address(database));
         _;
+    }
+
+    function getPatientHash() public view onlyOwner returns (bytes32){
+        return patient_hash;
     }
 
     function addRecordFromDatabase(
@@ -59,7 +64,7 @@ contract EMRStorageContract is Ownable {
         emrIds.push(_recordId);
         // database.sendRewardForEmrCreation(owner());
 
-        emit EMRCreated(owner(), _recordId);
+        // emit EMRCreated(owner(), _recordId);
     }
 
     function addRecord(
@@ -82,7 +87,7 @@ contract EMRStorageContract is Ownable {
         emrIds.push(_recordId);
         // database.sendRewardForEmrCreation(owner());
 
-        emit EMRCreated(owner(), _recordId);
+        // emit EMRCreated(owner(), _recordId);
     }
 
     function voidEMR(uint256 _emrID) public onlyOwner {
@@ -104,7 +109,7 @@ contract EMRStorageContract is Ownable {
         return emrIds;
     }
 
-    function setDatabaseAddress(EMRContractDatabase db) public onlyOwner {
+    function setDatabaseAddress(EMRContractDatabaseV2 db) public onlyOwner {
         database = db;
     }
 }

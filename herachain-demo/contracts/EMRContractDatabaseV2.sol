@@ -47,7 +47,7 @@ contract EMRContractDatabaseV2 {
             revert("An EMRStorageContract already exists for this patient");
         }
 
-        EMRStorageContract new_emr_storage = new EMRStorageContract(
+        EMRStorageContractV2 new_emr_storage = new EMRStorageContractV2(
             this,
             patient_hash
         );
@@ -66,7 +66,7 @@ contract EMRContractDatabaseV2 {
             revert("An EMRStorageContract already exists for this patient");
         }
 
-        EMRStorageContract new_emr_storage = new EMRStorageContract(
+        EMRStorageContractV2 new_emr_storage = new EMRStorageContractV2(
             this,
             patient_hash
         );
@@ -96,7 +96,7 @@ contract EMRContractDatabaseV2 {
         }
 
         //Then create a new record struct in the newly created contract
-        EMRStorageContract storageContract = EMRStorageContract(
+        EMRStorageContractV2 storageContract = EMRStorageContractV2(
             patientsToEMRStorage[patient_hash]
         );
         storageContract.addRecordFromDatabase(
@@ -138,7 +138,7 @@ contract EMRContractDatabaseV2 {
         if (patientsToEMRStorage[patient_hash] == address(0x0)) {
             revert();
         }
-        EMRStorageContract storageContract = EMRStorageContract(
+        EMRStorageContractV2 storageContract = EMRStorageContractV2(
             patientsToEMRStorage[patient_hash]
         );
 
