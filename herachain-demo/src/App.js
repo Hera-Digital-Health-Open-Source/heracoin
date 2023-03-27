@@ -1,6 +1,6 @@
 import './App.css';
 import { ethers } from 'ethers'
-import Caver from 'caver-js'
+// import Caver from 'caver-js'
 import { create as ipfsHttpClient } from 'ipfs-http-client'
 
 import React, { useState, useRef, useEffect, useContext } from 'react'
@@ -26,7 +26,8 @@ import RecordComponent from './RecordComponent';
 
 
 const BAOBAB_TESTNET_RPC_URL = 'https://api.baobab.klaytn.net:8651/'
-const caver = new Caver(BAOBAB_TESTNET_RPC_URL)
+const MUMBAI_TESTNET_RPC_URL = 'https://endpoints.omniatech.io/v1/matic/mumbai/public'
+// const caver = new Caver(BAOBAB_TESTNET_RPC_URL)
 
 
 //IPFS endpoint
@@ -98,7 +99,7 @@ function App({ Component, pageProps }) {
         return web3Modal
     }
 
-    async function checkForBoabab() {
+    async function checkForChain() {
         const provider = window.ethereum;
         if (!provider) {
             console.log("Metamask is not installed, please install!");
@@ -107,9 +108,9 @@ function App({ Component, pageProps }) {
         try {
             await provider.request({
                 method: 'wallet_switchEthereumChain',
-                params: [{ chainId: '0x3E9' }],
+                params: [{ chainId: '80001' }],
             });
-            console.log("You have succefully switched to Boabab Test network")
+            console.log("You have succefully switched to Polygon Mumbai Test network")
             return
         } catch (switchError) {
             // This error code indicates that the chain has not been added to MetaMask.
@@ -123,10 +124,10 @@ function App({ Component, pageProps }) {
                 method: 'wallet_addEthereumChain',
                 params: [
                     {
-                        chainId: '0x3E9',
-                        chainName: 'boabab',
-                        rpcUrls: [BAOBAB_TESTNET_RPC_URL],
-                        nativeCurrency: { symbol: 'KLAY', decimals: 18 }
+                        chainId: '80001',
+                        chainName: 'Mumbai',
+                        rpcUrls: [MUMBAI_TESTNET_RPC_URL],
+                        nativeCurrency: { symbol: 'MATIC', decimals: 18 }
                     }]
             });
         }
@@ -138,7 +139,7 @@ function App({ Component, pageProps }) {
     /* the connect function uses web3 modal to connect to the user's wallet */
     async function connect() {
         try {
-            await checkForBoabab()
+            await checkForChain()
             const web3Modal = await getWeb3Modal()
             const connection = await web3Modal.connect()
             const provider = new ethers.providers.Web3Provider(connection)

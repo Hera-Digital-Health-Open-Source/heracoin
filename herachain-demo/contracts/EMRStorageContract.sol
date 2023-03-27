@@ -105,4 +105,21 @@ contract EMRStorageContract is Ownable {
     function setDatabaseAddress(EMRContractDatabase db) public onlyOwner {
         database = db;
     }
+
+        function isTrustedForwarder(address signer) public view returns (bool){
+        return forwarder == signer;
+    }
+
+    function msgSender() internal view returns (address payable signer){
+        signer = payable(msg.sender)
+        if (msg.data.length >=20 && isTrustedForwarder(signer)){
+            assembly {
+                signer :=shr(96, calldataload(sub(calldatasize(),20)))
+            }
+            return signer
+        }
+        else{
+            revert('invalid call);
+        }
+    }
 }

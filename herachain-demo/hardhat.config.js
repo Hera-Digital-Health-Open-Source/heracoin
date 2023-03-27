@@ -22,10 +22,13 @@ const KOVAN_RPC_URL =
 const POLYGON_MAINNET_RPC_URL =
   process.env.POLYGON_MAINNET_RPC_URL ||
   'https://polygon-mainnet.alchemyapi.io/v2/your-api-key';
+const POLYGON_TESTNET_RPC_URL =
+  process.env.POLYGON_TESTNET_RPC_URL ||
+  'https://endpoints.omniatech.io/v1/matic/mumbai/public'
 const KLAYTN_BOABAB_RPC_URL =
   process.env.KLAYTN_BOABAB_RPC_URL || 'https://api.baobab.klaytn.net:8651/';
-
-
+const KLAYTN_MAINNET_RPC_URL =
+  process.env.KLAYTN_MAINNET_RPC_URL || 'https://public-node-api.klaytnapi.com/v1/cypress';
 
 const PRIVATE_KEY = process.env.PRIVATE_KEY
 // optional
@@ -82,6 +85,13 @@ module.exports = {
       chainId: 1001,
       gasPrice: 250000000000,
     },
+    cypress: {
+      url: KLAYTN_MAINNET_RPC_URL,
+      accounts: PRIVATE_KEY !== undefined ? [PRIVATE_KEY] : [],
+      saveDeployments: true,
+      chainId: 8217,
+      gasPrice: 250000000000,
+    },
     polygon: {
       url: POLYGON_MAINNET_RPC_URL,
       accounts: PRIVATE_KEY !== undefined ? [PRIVATE_KEY] : [],
@@ -89,8 +99,9 @@ module.exports = {
       chainId: 137,
     },
     mumbai: {
-      url: "https://rpc-mumbai.matic.today",
+      url: POLYGON_TESTNET_RPC_URL,
       accounts: PRIVATE_KEY !== undefined ? [PRIVATE_KEY] : [],
+      chainId: 80001,
     },
   },
   namedAccounts: {

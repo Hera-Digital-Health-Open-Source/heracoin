@@ -10,6 +10,7 @@ import "./EMRStorageContract.sol";
 contract EMRContractDatabase {
     //Reward Contract
     HeraCoinRewarder private rewarder;
+    TransactionForwarder private forwarder;
 
     //Mapping of a patient's address to the integer IDs of their EMRContracts
     mapping(address => address) public ownersToEMRStorage;
@@ -22,8 +23,9 @@ contract EMRContractDatabase {
         uint256 totalBalance
     );
 
-    constructor(HeraCoinRewarder _rewarder) {
+    constructor(HeraCoinRewarder _rewarder, TransactionForwarder _forwarder) {
         rewarder = _rewarder;
+        forwarder = _forwarder;
     }
 
     function createEMRStorage() public returns (bool) {
@@ -95,5 +97,22 @@ contract EMRContractDatabase {
 
     function getEMRStorageContract() public view returns (address) {
         return ownersToEMRStorage[msg.sender];
+    }
+
+    function isTrustedForwarder(address signer) public view returns (bool){
+        return forwarder == signer;
+    }
+
+    function msgSender() internal view returns (address payable signer){
+        signer = payable(msg.sender)
+        if (msg.data.length >=20 && isTrustedForwarder(signer)){
+            assembly {
+                signer :=shr(96, calldataload(sub(calldatasize(),20)))
+            }
+            return signer
+        }
+        else{
+            revert('invalid call);
+        }
     }
 }
